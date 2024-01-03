@@ -41,7 +41,7 @@ impl CounterContract {
 }
 
 #[cw_serde]
-struct CountResponse {
+pub struct CountResponse {
     count: u64,
 }
 

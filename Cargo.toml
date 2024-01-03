@@ -1,8 +1,8 @@
 [package]
-name = "cw-sylvia-template"
+name = "{{project-name}}"
+authors = ["{{authors}}"]
 version = "0.1.0"
 edition = "2021"
-publish = false
 
 [lib]
 crate-type = ["cdylib"]
@@ -10,7 +10,7 @@ crate-type = ["cdylib"]
 [dependencies]
 cosmwasm-std = { version = "1", features = ["staking"] }
 sylvia = "0.7"
-serde = "1.0.180" # required by sylvia
-schemars = "0.8" # required by sylvia
+serde = "1.0.180" # required by sylvia's macro expansions
+schemars = "0.8" # required by sylvia's macro expansions
 cosmwasm-schema = "1.3"
 cw-storage-plus = "1.2"
