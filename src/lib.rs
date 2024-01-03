@@ -2,7 +2,7 @@ use cosmwasm_schema::cw_serde;
 use cosmwasm_std::{Response, StdResult};
 use cw_storage_plus::Item;
 use sylvia::{
-    contract,
+    contract, entry_points,
     types::{ExecCtx, InstantiateCtx, QueryCtx},
 };
 
@@ -10,6 +10,7 @@ pub struct CounterContract {
     pub count: Item<'static, u64>,
 }
 
+#[entry_points]
 #[contract]
 impl CounterContract {
     pub fn new() -> Self {
