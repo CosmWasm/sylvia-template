@@ -20,3 +20,7 @@ serde = "1.0.180" # required by sylvia's macro expansions
 schemars = "0.8" # required by sylvia's macro expansions
 cosmwasm-schema = "1.3"
 cw-storage-plus = "1.2"
+
+
+[dev-dependencies]
+sylvia = { version = "0.7.0", features = ["mt"] }

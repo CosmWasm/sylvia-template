@@ -42,7 +42,7 @@ impl CounterContract {
 
 #[cw_serde]
 pub struct CountResponse {
-    count: u64,
+    pub count: u64,
 }
 
 #[cfg(test)]
