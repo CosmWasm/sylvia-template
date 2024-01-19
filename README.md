@@ -6,7 +6,7 @@ This project template is designed for the [_Sylvia framework_], a comprehensive 
 
 ### Prerequisites
 
-Before you begin, ensure `cargo-generate` is installed on yuor system.
+Before you begin, ensure `cargo-generate` is installed on your system.
 
 ```sh
 cargo install cargo-generate
