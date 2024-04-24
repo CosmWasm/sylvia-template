@@ -2,29 +2,29 @@ use cosmwasm_schema::cw_serde;
 use cosmwasm_std::{Response, StdResult};
 use cw_storage_plus::Item;
 
-use sylvia::{contract, entry_points};
+use sylvia::contract;
 use sylvia::types::{ExecCtx, InstantiateCtx, QueryCtx};
 
 pub struct CounterContract {
-    pub count: Item<'static, u64>,
+    pub count: Item<u64>,
 }
 
-#[cfg_attr(not(feature = "library"), entry_points)]
+#[cfg_attr(not(feature = "library"), sylvia::entry_points)]
 #[contract]
 impl CounterContract {
-    pub fn new() -> Self {
+    pub const fn new() -> Self {
         Self {
             count: Item::new("count"),
         }
     }
 
-    #[msg(instantiate)]
+    #[sv::msg(instantiate)]
     fn instantiate(&self, ctx: InstantiateCtx) -> StdResult<Response> {
         self.count.save(ctx.deps.storage, &0)?;
         Ok(Response::new())
     }
 
-    #[msg(exec)]
+    #[sv::msg(exec)]
     fn increment(&self, ctx: ExecCtx) -> StdResult<Response> {
         self.count
             .update(ctx.deps.storage, |count| -> StdResult<u64> {
@@ -33,7 +33,7 @@ impl CounterContract {
         Ok(Response::new())
     }
 
-    #[msg(query)]
+    #[sv::msg(query)]
     fn count(&self, ctx: QueryCtx) -> StdResult<CountResponse> {
         let count = self.count.load(ctx.deps.storage)?;
         Ok(CountResponse { count })
@@ -56,7 +56,6 @@ mod tests {
     // For more complex tests (particularly involving cross-contract calls), you
     // may want to check out `cw-multi-test`:
     // https://github.com/CosmWasm/cw-multi-test
-
     #[test]
     fn init() {
         let contract = CounterContract::new();
