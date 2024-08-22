@@ -1,31 +1,40 @@
 use cosmwasm_schema::cw_serde;
-use cosmwasm_std::{Response, StdResult};
 use cw_storage_plus::Item;
+#[cfg(not(feature = "library"))]
+use sylvia::cw_std::Empty;
+use sylvia::cw_std::{Response, StdResult};
 
 use sylvia::contract;
-use sylvia::types::{ExecCtx, InstantiateCtx, QueryCtx};
+use sylvia::types::{CustomMsg, CustomQuery, ExecCtx, InstantiateCtx, QueryCtx};
 
-pub struct CounterContract {
+pub struct CounterContract<E, Q> {
     pub count: Item<u64>,
+    _phantom: std::marker::PhantomData<(E, Q)>,
 }
 
-#[cfg_attr(not(feature = "library"), sylvia::entry_points)]
+#[cfg_attr(not(feature = "library"), sylvia::entry_points(generics<Empty, Empty>))]
 #[contract]
-impl CounterContract {
+#[sv::custom(msg = E, query = Q)]
+impl<E, Q> CounterContract<E, Q>
+where
+    E: CustomMsg + 'static,
+    Q: CustomQuery + 'static,
+{
     pub const fn new() -> Self {
         Self {
             count: Item::new("count"),
+            _phantom: std::marker::PhantomData,
         }
     }
 
     #[sv::msg(instantiate)]
-    fn instantiate(&self, ctx: InstantiateCtx) -> StdResult<Response> {
+    fn instantiate(&self, ctx: InstantiateCtx<Q>) -> StdResult<Response<E>> {
         self.count.save(ctx.deps.storage, &0)?;
         Ok(Response::new())
     }
 
     #[sv::msg(exec)]
-    fn increment(&self, ctx: ExecCtx) -> StdResult<Response> {
+    fn increment(&self, ctx: ExecCtx<Q>) -> StdResult<Response<E>> {
         self.count
             .update(ctx.deps.storage, |count| -> StdResult<u64> {
                 Ok(count + 1)
@@ -34,7 +43,7 @@ impl CounterContract {
     }
 
     #[sv::msg(query)]
-    fn count(&self, ctx: QueryCtx) -> StdResult<CountResponse> {
+    fn count(&self, ctx: QueryCtx<Q>) -> StdResult<CountResponse> {
         let count = self.count.load(ctx.deps.storage)?;
         Ok(CountResponse { count })
     }
@@ -49,7 +58,9 @@ pub struct CountResponse {
 mod tests {
     use super::*;
 
-    use cosmwasm_std::testing::{mock_dependencies, mock_env, mock_info};
+    use sylvia::cw_multi_test::IntoAddr;
+    use sylvia::cw_std::testing::{message_info, mock_dependencies, mock_env};
+    use sylvia::cw_std::Empty;
 
     // Unit tests don't have to use a testing framework for simple things.
     //
@@ -58,9 +69,10 @@ mod tests {
     // https://github.com/CosmWasm/cw-multi-test
     #[test]
     fn init() {
-        let contract = CounterContract::new();
+        let sender = "alice".into_addr();
+        let contract = CounterContract::<Empty, Empty>::new();
         let mut deps = mock_dependencies();
-        let ctx = InstantiateCtx::from((deps.as_mut(), mock_env(), mock_info("alice", &[])));
+        let ctx = InstantiateCtx::from((deps.as_mut(), mock_env(), message_info(&sender, &[])));
         contract.instantiate(ctx).unwrap();
 
         // We're inspecting the raw storage here, which is fine in unit tests. In
@@ -71,9 +83,10 @@ mod tests {
 
     #[test]
     fn query() {
-        let contract = CounterContract::new();
+        let sender = "alice".into_addr();
+        let contract = CounterContract::<Empty, Empty>::new();
         let mut deps = mock_dependencies();
-        let ctx = InstantiateCtx::from((deps.as_mut(), mock_env(), mock_info("alice", &[])));
+        let ctx = InstantiateCtx::from((deps.as_mut(), mock_env(), message_info(&sender, &[])));
         contract.instantiate(ctx).unwrap();
 
         let ctx = QueryCtx::from((deps.as_ref(), mock_env()));
@@ -83,12 +96,13 @@ mod tests {
 
     #[test]
     fn inc() {
-        let contract = CounterContract::new();
+        let sender = "alice".into_addr();
+        let contract = CounterContract::<Empty, Empty>::new();
         let mut deps = mock_dependencies();
-        let ctx = InstantiateCtx::from((deps.as_mut(), mock_env(), mock_info("alice", &[])));
+        let ctx = InstantiateCtx::from((deps.as_mut(), mock_env(), message_info(&sender, &[])));
         contract.instantiate(ctx).unwrap();
 
-        let ctx = ExecCtx::from((deps.as_mut(), mock_env(), mock_info("alice", &[])));
+        let ctx = ExecCtx::from((deps.as_mut(), mock_env(), message_info(&sender, &[])));
         contract.increment(ctx).unwrap();
 
         let ctx = QueryCtx::from((deps.as_ref(), mock_env()));
