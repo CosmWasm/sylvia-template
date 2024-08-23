@@ -27,17 +27,21 @@ jobs:
       # see https://github.com/rust-lang/cargo/issues/9922
       - name: Move generated project to temp folder
         run: mv $PROJECT_NAME ${{ runner.temp }}/
-      - name: Enter temp folder
-        run: cd ${{ runner.temp }}/$PROJECT_NAME
       - name: Test project
+        working-directory: ${{ runner.temp }}/${{ env.PROJECT_NAME }}
         run: cargo test
       - name: Clippy project
+        working-directory: ${{ runner.temp }}/${{ env.PROJECT_NAME }}
         run: cargo clippy --all-targets -- -D warnings 
       - name: Fmt check project
+        working-directory: ${{ runner.temp }}/${{ env.PROJECT_NAME }}
         run: cargo fmt --check
       - name: Build WASM binary 
+        working-directory: ${{ runner.temp }}/${{ env.PROJECT_NAME }}
         run: cargo wasm
       - name: Install cosmwasm-check
+        working-directory: ${{ runner.temp }}/${{ env.PROJECT_NAME }}
         run: cargo install cosmwasm-check
       - name: Check contracts
-        run: find examples/target/wasm32-unknown-unknown/release/ -type f -name "*.wasm" -exec cosmwasm-check {} \;
+        working-directory: ${{ runner.temp }}/${{ env.PROJECT_NAME }}
+        run: cosmwasm-check target/wasm32-unknown-unknown/release/*.wasm
