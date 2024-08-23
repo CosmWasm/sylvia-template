@@ -21,5 +21,7 @@ jobs:
       - run: |
           mv $PROJECT_NAME ${{ runner.temp }}/
           cd ${{ runner.temp }}/$PROJECT_NAME
-          cargo check
+          cargo fmt --check
+          cargo clippy --all-targets -- -D warnings
           cargo test
+          cargo wasm
