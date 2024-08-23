@@ -8,20 +8,36 @@ jobs:
     env:
       PROJECT_NAME: project-foo 
     steps:
-      - uses: actions/checkout@v4
-      - uses: cargo-generate/cargo-generate-action@latest
+      - name: Checkout source
+        uses: actions/checkout@v4
+      - name: Generate project
+        uses: cargo-generate/cargo-generate-action@latest
         with:
           name: ${{ env.PROJECT_NAME }}
-      - uses: actions-rs/toolchain@v1
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
+          target: wasm32-unknown-unknown
+          profile: minimal
+          override: true
+          components: rustfmt, clippy
       # we need to move the generated project to a temp folder, away from the template project
       # otherwise `cargo` runs would fail 
       # see https://github.com/rust-lang/cargo/issues/9922
-      - run: |
-          mv $PROJECT_NAME ${{ runner.temp }}/
-          cd ${{ runner.temp }}/$PROJECT_NAME
-          cargo fmt --check
-          cargo clippy --all-targets -- -D warnings
-          cargo test
-          cargo wasm
+      - name: Move generated project to temp folder
+        run: mv $PROJECT_NAME ${{ runner.temp }}/
+      - name: Enter temp folder
+        run: cd ${{ runner.temp }}/$PROJECT_NAME
+      - name: Test project
+        run: cargo test
+      - name: Clippy project
+        run: cargo clippy --all-targets -- -D warnings 
+      - name: Fmt check project
+        run: cargo fmt --check
+      - name: Build WASM binary 
+        run: cargo wasm
+      - name: Install cosmwasm-check
+        run: cargo install cosmwasm-check
+      - name: Check contracts
+        run: find examples/target/wasm32-unknown-unknown/release/ -type f -name "*.wasm" -exec cosmwasm-check {} \;
