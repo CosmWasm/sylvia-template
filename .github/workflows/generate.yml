@@ -17,7 +17,7 @@ jobs:
       - name: Install Rust
         uses: actions-rs/toolchain@v1
         with:
-          toolchain: stable
+          toolchain: 1.81.0
           target: wasm32-unknown-unknown
           profile: minimal
           override: true
@@ -38,7 +38,7 @@ jobs:
         run: cargo fmt --check
       - name: Build WASM binary 
         working-directory: ${{ runner.temp }}/${{ env.PROJECT_NAME }}
-        run: cargo wasm
+        run: rustc --version && cargo wasm
       - name: Install cosmwasm-check
         working-directory: ${{ runner.temp }}/${{ env.PROJECT_NAME }}
         run: cargo install cosmwasm-check
