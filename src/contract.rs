@@ -1,11 +1,11 @@
-use cosmwasm_schema::cw_serde;
 use cw_storage_plus::Item;
+use sylvia::contract;
+use sylvia::ctx::{ExecCtx, InstantiateCtx, QueryCtx};
+use sylvia::cw_schema::cw_serde;
 #[cfg(not(feature = "library"))]
 use sylvia::cw_std::Empty;
 use sylvia::cw_std::{Response, StdResult};
-
-use sylvia::contract;
-use sylvia::types::{CustomMsg, CustomQuery, ExecCtx, InstantiateCtx, QueryCtx};
+use sylvia::types::{CustomMsg, CustomQuery};
 
 pub struct CounterContract<E, Q> {
     pub count: Item<u64>,
@@ -49,7 +49,7 @@ where
     }
 }
 
-#[cw_serde]
+#[cw_serde(crate = "sylvia")]
 pub struct CountResponse {
     pub count: u64,
 }
