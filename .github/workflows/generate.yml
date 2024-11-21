@@ -15,12 +15,10 @@ jobs:
         with:
           name: ${{ env.PROJECT_NAME }}
       - name: Install Rust
-        uses: actions-rs/toolchain@v1
+        uses: dtolnay/rust-toolchain@stable
         with:
-          toolchain: 1.81.0
-          target: wasm32-unknown-unknown
-          profile: minimal
-          override: true
+          toolchain: 1.75.0
+          targets: wasm32-unknown-unknown
           components: rustfmt, clippy
       # we need to move the generated project to a temp folder, away from the template project
       # otherwise `cargo` runs would fail 
