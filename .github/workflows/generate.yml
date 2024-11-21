@@ -36,7 +36,7 @@ jobs:
         run: cargo fmt --check
       - name: Build WASM binary 
         working-directory: ${{ runner.temp }}/${{ env.PROJECT_NAME }}
-        run: rustc --version && cargo wasm
+        run: cargo wasm
       - name: Install cosmwasm-check
         working-directory: ${{ runner.temp }}/${{ env.PROJECT_NAME }}
         run: cargo install cosmwasm-check
