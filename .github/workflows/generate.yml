@@ -39,7 +39,7 @@ jobs:
         run: cargo wasm
       - name: Install cosmwasm-check
         working-directory: ${{ runner.temp }}/${{ env.PROJECT_NAME }}
-        run: cargo install cosmwasm-check
+        run: cargo install cosmwasm-check --locked
       - name: Check contracts
         working-directory: ${{ runner.temp }}/${{ env.PROJECT_NAME }}
         run: cosmwasm-check target/wasm32-unknown-unknown/release/*.wasm
