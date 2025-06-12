@@ -17,7 +17,7 @@ jobs:
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
         with:
-          toolchain: 1.75.0
+          toolchain: 1.82.0
           targets: wasm32-unknown-unknown
           components: rustfmt, clippy
       # we need to move the generated project to a temp folder, away from the template project
