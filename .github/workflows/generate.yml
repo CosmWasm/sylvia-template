@@ -17,7 +17,7 @@ jobs:
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
         with:
-          toolchain: 1.82.0
+          toolchain: 1.81.0
           targets: wasm32-unknown-unknown
           components: rustfmt, clippy
       # we need to move the generated project to a temp folder, away from the template project
@@ -39,7 +39,7 @@ jobs:
         run: cargo wasm
       - name: Install cosmwasm-check
         working-directory: ${{ runner.temp }}/${{ env.PROJECT_NAME }}
-        run: cargo install cosmwasm-check
+        run: cargo install cosmwasm-check --locked
       - name: Check contracts
         working-directory: ${{ runner.temp }}/${{ env.PROJECT_NAME }}
         run: cosmwasm-check target/wasm32-unknown-unknown/release/*.wasm
