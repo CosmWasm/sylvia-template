@@ -1,2 +1,2 @@
 [template]
-ignore = ["README.md", "LICENSE"]
+ignore = ["README.md", "LICENSE", "target", "Cargo.lock"]
