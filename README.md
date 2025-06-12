@@ -70,7 +70,7 @@ Examples of both are provided in this template.
 
 ## License
 
-The template itself is licensed under the [Apache 2.0](LICENSE) license].
+The template itself is licensed under the [Apache 2.0](LICENSE) license.
 After generating, no license file is included with your new project - you might want to add one if you're making
 your source code publicly available!
 
